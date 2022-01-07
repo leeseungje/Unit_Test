@@ -71,3 +71,134 @@ Dom에 컴포넌트를 랜더링하는 함수
 - `getBy...`: 쿼리에 대해 일치하는 노드를 반환하고 일치하는 요소가 없어나 둘 이상의 일치가 발견되면 설명 오류를 발생시킨다. (둘 이상의 요소가 예상되는 경우 대신 getAllBy 사용)
 - `queryBy...`: 쿼리에 대해 일치하는 노드를 반환하고 일치하는 요소가 없으면 null 반환. 이것은 존재하지 않는 요소를 어설션하는 데 유용함,
 - `findBy...`: 주어진 쿼리와 일치하는 요소가 발견되면 해결되는 Promise를 반환한다. 요소가 발견되지 않거나 기본 제한 시간인 1000ms후에 둘 이상의 요소가 발견되면 약속이 거부됨.
+
+## TDD (Test Driven Development)란?
+
+- 실제 코드를 작성하기 전에 케스트 코드를 먼저 작성.
+- 테스트 코드를 작성한 후 그 테스트 코드를 Pass할 수 있는 실제 코드를 작성
+
+1. 원하고자 하는 기능의 테스트 코드 작성
+2. 테스트 실행 (Fail)
+3. 테스트 코드에 맞는 실제 코드 작성
+4. 테스트 실행 (Pass)
+
+## TDD를 하면 좋은점
+
+1. TDD를 하므로 인해 많은 기능을 테스트하기에 소스 코드에 안정감이 부여된다.
+2. 실제 개발하면서 많은 시간이 소요되는 부분은 디버깅 부분이기에 TDD를 사용하면 디버깅 시간이 줄어들고 실제 개발 시간도 준다.
+3. 소스 코드 하나하날를 더욱 신중하게 짤 수 있기 때문에 깨끙한 코드가 나올 확률이 높다.
+
+- counter.js
+
+```javascript
+const [count, setCount] = useState(0)
+const [isDisabled, setDisabled] = useState(false)
+const increase = () => {
+  setCount(count + 1)
+}
+const decrease = () => {
+  setCount(count - 1)
+}
+const handleOff = () => {
+  setDisabled(!isDisabled)
+}
+return (
+  <div className="App">
+    <header className="App-header">
+      <h3 data-testid="counter">{count}</h3>
+      <div>
+        <button
+          disabled={isDisabled}
+          onClick={decrease}
+          data-testid="minus-button"
+        >
+          -
+        </button>
+        <button
+          disabled={isDisabled}
+          onClick={increase}
+          data-testid="plus-button"
+        >
+          +
+        </button>
+      </div>
+      <button
+        style={{ backgroundColor: 'blue' }}
+        onClick={handleOff}
+        data-testid="on/off-button"
+      >
+        on/off
+      </button>
+    </header>
+  </div>
+)
+```
+
+- counter.test.js
+
+```javascript
+test('the Counter Starts at 0', () => {
+  render(<App />)
+  // screen object를 이용해서 원하는 엘레멘트에 접근(접근할 때 id로)
+  const counterElement = screen.getByTestId('counter')
+  // id가 counter인 엘레멘트의 텍스트가 0인지 테스트
+  expect(counterElement).toHaveTextContent(0)
+})
+
+test('플러스 버튼에 "+" 버튼인지 체크', () => {
+  render(<App />)
+
+  const buttonElement = screen.getByTestId('plus-button')
+  expect(buttonElement).toHaveTextContent('+')
+})
+
+test('플러스 버튼에 "-" 버튼인지 체크', () => {
+  render(<App />)
+
+  const buttonElement = screen.getByTestId('minus-button')
+  expect(buttonElement).toHaveTextContent('-')
+})
+
+test('플러스버튼을 눌렀을 시 1로 바뀌었는지 확인', () => {
+  render(<App />)
+  const buttonElement = screen.getByTestId('plus-button')
+  // click plus button
+  fireEvent.click(buttonElement)
+  const counterElement = screen.getByTestId('counter')
+  expect(counterElement).toHaveTextContent(1)
+})
+
+test('마이너스버튼을 눌렀을 시 -1로 바뀌었는지 확인', () => {
+  render(<App />)
+  const buttonElement = screen.getByTestId('minus-button')
+  // click minus button
+  fireEvent.click(buttonElement)
+  const counterElement = screen.getByTestId('counter')
+  expect(counterElement).toHaveTextContent(-1)
+})
+
+test('on/off버튼 색상이 파란색인지 확인', () => {
+  render(<App />)
+  const buttonElement = screen.getByTestId('on/off-button')
+  expect(buttonElement).toHaveStyle({ backgroundColor: 'blue' })
+})
+
+test('on/off버튼을 눌렀을 경우 비활성화가 되는지 확인', () => {
+  render(<App />)
+  const buttonElement = screen.getByTestId('on/off-button')
+  // click plus button
+  fireEvent.click(buttonElement)
+  const plusButtonElement = screen.getByTestId('plus-button')
+  const minusButtonElement = screen.getByTestId('minus-button')
+  expect(plusButtonElement && minusButtonElement).toBeDisabled()
+})
+```
+
+1. test.only, test.skip 기능도 있다.
+2. test.only: 해당 테스트만 테스트 하고 나머지는 스킵
+3. test.skip: 해당 테스트만 스킵하고 나머지 테스트
+
+### FireEvent Api
+
+유저가 발생시키는 액션(이벤트)에 대한 테스트를 해야되는 경우 사용
+[링크](https://testing-library.com/docs/dom-testing-library/api-events/)
