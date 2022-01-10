@@ -202,3 +202,15 @@ test('on/off버튼을 눌렀을 경우 비활성화가 되는지 확인', () => 
 
 유저가 발생시키는 액션(이벤트)에 대한 테스트를 해야되는 경우 사용
 [링크](https://testing-library.com/docs/dom-testing-library/api-events/)
+
+## Query 사용 우선 순위
+- 지금까지 연습했던 방식으로는 `getByTestId()`로 id를 찾았지만 이상적이지 않다.
+- [참고](https://testing-library.com/docs/queries/about#priority)
+- 찾는 방법 `getByRole('button', {name: /submit/i})` (i는 submit의 대소문자 구문을 없애기 위해 적는다.)
+- `getByAltText`는 alt Text로 찾는 방식인데 (img, area, input)일 경우 사용 한다.
+- getByTestId는 가장 나중에 찾는 방식을 추천 한다. (어떠한 경우로도 찾을 수 없을 경우 이 방식을 사용하길 추천 한다.)
+
+## userEvent > fireEvent
+- 지금까지 클릭 이벤트에서는 fireEvent를 중점으로 사용하였지만 `userEvent(element)`를 더 추천 한다.
+- fireEvent를 사용하면서 엘리먼트의 타입에 따라 label을 클릭했을때 checkbox나 radio를 클릭했을 때 그 엘리먼트 타입에 맞는 더욱 적절한 반응을 보여준다.
+- fireEvent를 사용하면 focus가 되지 않는다. 하지만 userEvent를 사용 하면 focus가 되어 클릭하는 행위가 더 잘 표현된다.
