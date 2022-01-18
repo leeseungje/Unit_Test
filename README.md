@@ -107,26 +107,14 @@ return (
     <header className="App-header">
       <h3 data-testid="counter">{count}</h3>
       <div>
-        <button
-          disabled={isDisabled}
-          onClick={decrease}
-          data-testid="minus-button"
-        >
+        <button disabled={isDisabled} onClick={decrease} data-testid="minus-button">
           -
         </button>
-        <button
-          disabled={isDisabled}
-          onClick={increase}
-          data-testid="plus-button"
-        >
+        <button disabled={isDisabled} onClick={increase} data-testid="plus-button">
           +
         </button>
       </div>
-      <button
-        style={{ backgroundColor: 'blue' }}
-        onClick={handleOff}
-        data-testid="on/off-button"
-      >
+      <button style={{ backgroundColor: 'blue' }} onClick={handleOff} data-testid="on/off-button">
         on/off
       </button>
     </header>
@@ -204,6 +192,7 @@ test('on/off버튼을 눌렀을 경우 비활성화가 되는지 확인', () => 
 [링크](https://testing-library.com/docs/dom-testing-library/api-events/)
 
 ## Query 사용 우선 순위
+
 - 지금까지 연습했던 방식으로는 `getByTestId()`로 id를 찾았지만 이상적이지 않다.
 - [참고](https://testing-library.com/docs/queries/about#priority)
 - 찾는 방법 `getByRole('button', {name: /submit/i})` (i는 submit의 대소문자 구문을 없애기 위해 적는다.)
@@ -211,6 +200,58 @@ test('on/off버튼을 눌렀을 경우 비활성화가 되는지 확인', () => 
 - getByTestId는 가장 나중에 찾는 방식을 추천 한다. (어떠한 경우로도 찾을 수 없을 경우 이 방식을 사용하길 추천 한다.)
 
 ## userEvent > fireEvent
+
 - 지금까지 클릭 이벤트에서는 fireEvent를 중점으로 사용하였지만 `userEvent(element)`를 더 추천 한다.
 - fireEvent를 사용하면서 엘리먼트의 타입에 따라 label을 클릭했을때 checkbox나 radio를 클릭했을 때 그 엘리먼트 타입에 맞는 더욱 적절한 반응을 보여준다.
 - fireEvent를 사용하면 focus가 되지 않는다. 하지만 userEvent를 사용 하면 focus가 되어 클릭하는 행위가 더 잘 표현된다.
+
+## Mock Service Worker(MSW) - 모의서버
+
+- 사진이라 이름 또는 옵션의 이름을 Backend 서버에 response받는 모의 응답 서비스 모듈
+- 서버를 향한 네트워크 요청을 가로채서(intercept) 모의 응답(mocked response)을 내려주는 역할
+  ![Mock Service Worker 리퀘스트 흐름도](https://images.ctfassets.net/rpmifyuylbfw/3XIZI0nnDkI4CjgNMqpnoM/05d4203347d75435c386053ad3b6f4ee/msw_diagram.png?w=359)
+
+### MSW 작동 방식
+
+- 브라우저에서 서비스 워커를 등록하여 외부로 나가는 네트워크 리퀘스트를 감지
+- 중간에 그 요청을 가로채서 서버로 나갈때 `MSW 클라이언트 사이드 라이브러리`로 보낸다.
+- 그 루 등록된 핸들러에서 요청을 처리한 후 모의 응답을 브라우저로 보낸다.
+- Jest로 사용하는 테스트 환경을 만들어야 하기 때문에 노드와 통합하는 방식으로 한다.
+- [MSW 사용 방식 링크](https://mswjs.io/docs/getting-started/mocks/rest-api)
+
+- `/src/mocks/handlers.js`
+
+```javascript
+export const handler = [
+  rest get('/products', (req, res, ctx) => {
+    return res(
+      ctx.json([
+        {
+          "name": "America",
+          "imagePath": "/images/america.jpeg",
+        },
+        {
+          "name": "England",
+          "imagePath": "/images/england.jpeg",
+        },
+        {
+          "name": "Korea",
+          "imagePath": "/images/korea.jpeg",
+        },
+      ])
+    )
+  }),
+  rest.get('/options', (req, res, ctx) => {
+    return res(
+      ctx.json([
+        {
+          "name": "Insurance",
+        },
+        {
+          "name": "Dinner",
+        },
+      ])
+    )
+  })
+]
+```
