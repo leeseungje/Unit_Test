@@ -1,34 +1,34 @@
-import { rest } from 'msw'
+import { rest } from 'msw';
 
 export const handlers = [
-    rest.get('/products', (req, res, ctx) => {
+    rest.get('http://localhost:5000/products', (req, res, ctx) => {
         return res(
             ctx.json([
                 {
-                    "name": "America",
-                    "imagePath": "/images/america.jpeg",
+                    name: 'America',
+                    imagePath: '/images/america.jpeg',
                 },
                 {
-                    "name": "England",
-                    "imagePath": "/images/england.jpeg",
+                    name: 'England',
+                    imagePath: '/images/england.jpeg',
                 },
                 {
-                    "name": "Korea",
-                    "imagePath": "/images/korea.jpeg",
+                    name: 'Korea',
+                    imagePath: '/images/korea.jpeg',
                 },
             ])
-        )
+        );
     }),
-    rest.get('/options', (req, res, ctx) => {
+    rest.get('http://localhost:5000/options', (req, res, ctx) => {
         return res(
             ctx.json([
                 {
-                    "name": "Insurance",
+                    name: 'Insurance',
                 },
                 {
-                    "name": "Dinner",
+                    name: 'Dinner',
                 },
             ])
-        )
-    })
-]
+        );
+    }),
+];

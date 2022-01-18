@@ -1,18 +1,15 @@
-import React from 'react'
+import React from 'react';
 
-const Products = ({
-    name,
-    imagePath
-}) => {
+const Products = ({ name, imagePath }) => {
     return (
-        <div style={{ textAlign: "center" }}>
+        <div style={{ textAlign: 'center' }}>
             <img style={{ width: '75%' }} src={`${imagePath}`} alt={`${name} product`} />
-            <form style={{ marginTop: "10px" }}>
-                <label style={{ textAlign: "right" }}>{name}</label>
+            <form style={{ marginTop: '10px' }}>
+                <label style={{ textAlign: 'right' }}>{name}</label>
                 <input style={{ marginLeft: 7 }} type="number" name="quantity" min="0" defaultValue={0} />
             </form>
         </div>
-    )
-}
+    );
+};
 
-export default Products
+export default Products;

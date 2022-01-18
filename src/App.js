@@ -1,13 +1,9 @@
-import './App.css';
-import Counter from './components/Counter/Counter';
+import OrderPage from './pages/OrderPage/OrderPage';
 
 function App() {
-
     return (
-        <div className="App">
-            <header className="App-header">
-                <Counter />
-            </header>
+        <div style={{ padding: '4em' }}>
+            <OrderPage />
         </div>
     );
 }
