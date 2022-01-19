@@ -3,6 +3,16 @@ import { useEffect, useState } from 'react';
 import ErrorBanner from '../../components/ErrorBanner';
 import Products from './Products';
 import Options from './Options';
+import styled, { css } from 'styled-components';
+
+const StyledOption = styled.div`
+    display: flex;
+    ${props => props.name === "options" ? css`
+        flex-direction: column;
+    `: css`
+        gap: 10px;
+    `}    
+`
 
 const Type = ({ orderType }) => {
     const [items, setItems] = useState([]);
@@ -28,7 +38,7 @@ const Type = ({ orderType }) => {
             <h2>주문 종류 </h2>
             <p>하나의 가격</p>
             <p>총 가격:</p>
-            <div style={{ display: 'flex', flexDirection: orderType === 'options' && 'column' }}>{optionItems}</div>
+            <StyledOption name={orderType}>{optionItems}</StyledOption>
         </>
     );
 };

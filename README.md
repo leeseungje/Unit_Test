@@ -205,6 +205,45 @@ test('on/off버튼을 눌렀을 경우 비활성화가 되는지 확인', () => 
 - fireEvent를 사용하면서 엘리먼트의 타입에 따라 label을 클릭했을때 checkbox나 radio를 클릭했을 때 그 엘리먼트 타입에 맞는 더욱 적절한 반응을 보여준다.
 - fireEvent를 사용하면 focus가 되지 않는다. 하지만 userEvent를 사용 하면 focus가 되어 클릭하는 행위가 더 잘 표현된다.
 
+## userEvent.clear()
+
+- input이나 textarea에 텍스트를 선택(select)한 후 제거(delete) 해 준다.
+- 이 부분은 현재는 없어도 테스트 결과에 미치지는 않지만...
+- 현재 소스 코드 보다 위에서 같은 엘리먼트를 위한 userEvent를 사용한다면 clear 해준 후에 userEvent.type()을 사용하는게 좋다.
+- `/pages/OrderPage/tests/calculate.test.js`
+
+```javascript
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import Type from '../Type'
+
+test('product 값이 바뀌었을경우 총 가격 값이 바뀌었는지 체크', async () => {
+  render(<Type orderType="products" />)
+
+  // 여행 상품 가격은 0원 부터 시작
+  const productsTotal = screen.getByText('상품 총 가격: ', { exact: false }) // true가 기본
+  expect(productsTotal).toHaveTextContent('0') // string 으로 주어야 한다.
+
+  // 아메리카 여행 상품 한개 올리기
+  const americaInput = await screen.findByRole('spinbutton', {
+    name: 'America'
+  })
+  userEvent.clear(americaInput) // 처음 clear 처리
+  userEvent.type(americaInput, '1') // clear 후 type 처리 'americaInput' 에 1일 경우
+  expect(productsTotal).toHaveTextContent('1000') // americaInput에 1을 입력했을 경우 1000원이 올라가는지 체크
+
+  // 잉글랜드 여행 상품 3개 올리기
+  const englandInput = await screen.findByRole('spinbutton', {
+    name: 'England'
+  })
+  userEvent.clear(englandInput)
+  userEvent.type(englandInput, '3')
+  expect(productsTotal).toHaveTextContent('4000')
+})
+```
+
+- exact 이 내용은 '상품 총 가격' 뿐만 아니라 다른 텍스트도 찾을경우 false 해당 택스트만 찾을경우 true로 한다.
+
 ## Mock Service Worker(MSW) - 모의서버
 
 - 사진이라 이름 또는 옵션의 이름을 Backend 서버에 response받는 모의 응답 서비스 모듈
@@ -255,3 +294,33 @@ export const handler = [
   })
 ]
 ```
+
+## Context
+
+- context를 이용하면 단계마다 일일이 props를 넘겨주지 않아도 컴포넌트 트리 전체에 데이터를 제공할 수 있다.
+- 보통 react의 props는 위에서 아래로 props를 통해 전달되지만, 애플리케이션 안의 여러 컴포넌트를에 전해줘야 하는 props의 경우 과정이 번거롭다.
+- context를 이용하면, 트리 단계마다 명시적으로 props를 넘겨주지 않아도 많은 컴포넌트가 이러한 값을 공유하도록 할 수 있다.
+- 현재 앱에서는 여행 상품을 계산하는 데이터를 처리해줘야 한다.
+- 상품을 추가 할 수록 그에 맞게 가격을 올려줘야하고 옵션을 추가 해도 올려야 한다.
+- 그리고 총 가격을 상품 주문 페이지에서도 보고 주문 확인 페이지에서 봐야하기 때문에 데이터를 어려곳에 이동 시켜야 한다.
+
+### Context 사용 방법
+
+1. Context를 생성
+
+```javascript
+const OrderContext = createContext() // react에서 제공 createContext 함수 사용
+```
+
+2. Context는 Provider안에서 사용가능 하기 때문에 `Provider` 생성
+   `App.js`
+
+```javascript
+<OderContetxt.Provider value={밸류 값}>
+  <App />
+</OderContetxt.Provider>
+```
+
+- value에 들어갈 값 App 컴포넌트에서 사용할 데이터 혹은, 데이터를 업데이트 하는 함수
+
+3. 더 복잡한

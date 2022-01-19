@@ -1,10 +1,13 @@
 import { useState } from "react"
+import styled from "styled-components"
+
+const StyledForm = styled.form``
 
 const SummaryPage = () => {
     const [checked, setChecked] = useState(false)
     return (
         <>
-            <form>
+            <StyledForm>
                 <input
                     type="checkbox"
                     checked={checked}
@@ -14,7 +17,7 @@ const SummaryPage = () => {
                 <label htmlFor="confirm-checkbox">주문하려는 것을 확인하셨나요?</label>
                 <br />
                 <button disabled={!checked} type="submit">주문 확인</button>
-            </form>
+            </StyledForm>
         </>
     )
 }

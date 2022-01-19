@@ -1,14 +1,30 @@
 import React from 'react';
+import styled from 'styled-components';
+
+const StyledWrapper = styled.div`
+    text-align: center;
+    img {
+        width: 234px;
+        height: 161px;
+    }
+`
+const StyledForm = styled.form`
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    vertical-align: top;
+    text-align: left;
+`
 
 const Products = ({ name, imagePath }) => {
     return (
-        <div style={{ textAlign: 'center' }}>
-            <img style={{ width: '75%' }} src={`${imagePath}`} alt={`${name} product`} />
-            <form style={{ marginTop: '10px' }}>
-                <label style={{ textAlign: 'right' }}>{name}</label>
-                <input style={{ marginLeft: 7 }} type="number" name="quantity" min="0" defaultValue={0} />
-            </form>
-        </div>
+        <StyledWrapper>
+            <img src={`${imagePath}`} alt={`${name} product`} />
+            <StyledForm>
+                <label>{name}</label>
+                <input type="number" name="quantity" min="0" defaultValue={0} />
+            </StyledForm>
+        </StyledWrapper>
     );
 };
 

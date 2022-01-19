@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "axios": "^0.24.0",
-    "msw": "^0.36.3"
+    "msw": "^0.36.3",
+    "styled-components": "^5.3.3"
   }
 }
