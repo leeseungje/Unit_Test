@@ -323,4 +323,15 @@ const OrderContext = createContext() // react에서 제공 createContext 함수 
 
 - value에 들어갈 값 App 컴포넌트에서 사용할 데이터 혹은, 데이터를 업데이트 하는 함수
 
-3. 더 복잡한
+3. 더 복잡한로직을 구현하기 위해서 Provider를 위한 함수 생성
+   `OrderContext.js` (App.js에 있던 <OderContetxt.Provider value={밸류 값}> 이부분을 OrderContext.js에 별도로 넣어서 따로 리턴 한다.)
+
+```javascript
+import { createContext } from 'react'
+
+const OrderContext = createContext()
+
+export function OrderContextProvider(props) {
+  return <OrderContext.Provider value {...props} />
+}
+```
