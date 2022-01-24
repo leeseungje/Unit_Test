@@ -335,3 +335,67 @@ export function OrderContextProvider(props) {
   return <OrderContext.Provider value {...props} />
 }
 ```
+
+### context를 넣고 test를 진행 했을 경우 에러가 나는 이유?
+
+- 보통 context를 넣고 유닛 테스트를 진행 하면 에러가 기본적으로 뜬다.
+- 실제 코드는 OrderContextProvider로 감싸주었지만, 테스트 부분에는 감싸지 않아서 Context 에러가 난다.
+
+-`calculate.test.js`
+
+```javascript
+render(<Type orderType="products" />) // 기존 render가 이런식으로 부르기 때문에 에러가 뜨기 때문에
+
+import { OrderContextProvider } from '../../../context/OrderContext'
+
+render(<Type orderType="products" />, { wrapper: OrderContextProvider }) // 해당 방식으로 wrapper로 지정해 주면 context가 감싸진다.
+```
+
+### 모든 테스트 케이스의 context를 하나로 설정 하는 방법
+
+- 일일이 context호출 없이 customRender만으로 context를 호출하는 방식
+
+-`src/test-util.js`생성
+
+```javascript
+import { render } from '@testing-library/react'
+import { OrderContextProvider } from './contexts/ordercontext'
+
+const customRender = (ui, options) => {
+  render(ui, { wrapper: OrderContextProvider, ...options })
+}
+
+// customRender를 부르는 모든 라이브러리를 export 시킨다.
+export * from '@testing-library/react'
+
+// customRender로 오버라이드 시킨다.
+export { customRender as render }
+
+// customRender로 사용하되 그 이름은 render로 사용 한다.
+```
+
+1. ui: 렌더하고자 하는 jsx
+2. options: wrapper 옵션 이외에 우리가 주고자 하는 다른 옵션들
+
+-`calculate.test.js`
+
+```javascript
+// before
+import { render, screen } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
+import { OrderContextProvider } from "../../../context/OrderContext" // 삭제
+import Type from "../Type"
+
+test('여행 상품과 옵션의 개수에 따라 가격을 계산해주기', async () => {
+    // context 사용 시 wrapper를 감싸주어야 한다.
+    render(<Type orderType="products" />, { wrapper: OrderContextProvider })
+
+// after
+import { render, screen } from "../../../test-utils" // url 변경
+import userEvent from "@testing-library/user-event"
+import Type from "../Type"
+
+test('여행 상품과 옵션의 개수에 따라 가격을 계산해주기', async () => {
+    // context 사용 시 wrapper를 감싸주어야 한다.
+    render(<Type orderType="products" />) // wrapper 삭제
+```

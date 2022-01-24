@@ -16,13 +16,18 @@ const StyledForm = styled.form`
     text-align: left;
 `
 
-const Products = ({ name, imagePath }) => {
+
+const Products = ({ name, imagePath, updateItemCount }) => {
+    const handleChange = (event) => {
+        const currentValue = event.target.value;
+        updateItemCount(name, currentValue)
+    }
     return (
         <StyledWrapper>
             <img src={`${imagePath}`} alt={`${name} product`} />
             <StyledForm>
-                <label>{name}</label>
-                <input type="number" name="quantity" min="0" defaultValue={0} />
+                <label htmlFor={name}>{name}</label>
+                <input id={name} type="number" name="quantity" min="0" defaultValue={0} onChange={handleChange} />
             </StyledForm>
         </StyledWrapper>
     );
